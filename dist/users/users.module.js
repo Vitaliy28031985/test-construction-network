@@ -6,25 +6,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DatabaseModule = void 0;
+exports.UsersModule = void 0;
 const common_1 = require("@nestjs/common");
-const database_providers_1 = require("./database.providers");
+const users_service_1 = require("./users.service");
+const users_controller_1 = require("./users.controller");
 const mongoose_1 = require("@nestjs/mongoose");
-const price_schema_1 = require("./schemas/price.schema");
-const allow_schema_1 = require("./schemas/allow.schema");
-const user_schema_1 = require("./schemas/user.schema");
-let DatabaseModule = class DatabaseModule {
+const price_schema_1 = require("../database/schemas/price.schema");
+const allow_schema_1 = require("../database/schemas/allow.schema");
+const user_schema_1 = require("../database/schemas/user.schema");
+let UsersModule = class UsersModule {
 };
-exports.DatabaseModule = DatabaseModule;
-exports.DatabaseModule = DatabaseModule = __decorate([
+exports.UsersModule = UsersModule;
+exports.UsersModule = UsersModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: price_schema_1.Price.name, schema: price_schema_1.PriceSchema }]),
             mongoose_1.MongooseModule.forFeature([{ name: allow_schema_1.Allow.name, schema: allow_schema_1.AllowSchema }]),
             mongoose_1.MongooseModule.forFeature([{ name: user_schema_1.User.name, schema: user_schema_1.UserSchema }]),
         ],
-        providers: [...database_providers_1.databaseProviders],
-        exports: [...database_providers_1.databaseProviders],
+        controllers: [users_controller_1.UsersController],
+        providers: [users_service_1.UsersService],
     })
-], DatabaseModule);
-//# sourceMappingURL=database.module.js.map
+], UsersModule);
+//# sourceMappingURL=users.module.js.map

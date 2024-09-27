@@ -11,13 +11,14 @@ const common_1 = require("@nestjs/common");
 const prices_module_1 = require("./prices/prices.module");
 const mongoose_1 = require("@nestjs/mongoose");
 const dotenv_1 = require("dotenv");
+const users_module_1 = require("./users/users.module");
 (0, dotenv_1.config)();
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [mongoose_1.MongooseModule.forRoot(process.env.DB_HOST), prices_module_1.PricesModule],
+        imports: [mongoose_1.MongooseModule.forRoot(process.env.DB_HOST), prices_module_1.PricesModule, users_module_1.UsersModule],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
