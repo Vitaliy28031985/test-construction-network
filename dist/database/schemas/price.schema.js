@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PriceSchema = exports.Price = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-let Price = class Price extends mongoose_2.Document {
+let Price = class Price {
 };
 exports.Price = Price;
 __decorate([
@@ -23,6 +23,10 @@ __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", Number)
 ], Price.prototype, "price", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: "User", required: true }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], Price.prototype, "owner", void 0);
 exports.Price = Price = __decorate([
     (0, mongoose_1.Schema)({ versionKey: false, timestamps: true })
 ], Price);

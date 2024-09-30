@@ -21,15 +21,40 @@ let PricesService = class PricesService {
     constructor(priceModel) {
         this.priceModel = priceModel;
     }
-    async create(priceDto) {
-        const newPrice = new this.priceModel(priceDto);
-        return newPrice.save();
+    async create(priceDto, req) {
+        const user = req.user;
+        if (!user || typeof user !== "object" || !("_id" in user)) {
+            throw new Error("User not found");
+        }
+        const typedUser = user;
+        if (typeof priceDto.price !== "number") {
+            throw new Error("price isn`t number");
+        }
+        const newPrice = this.priceModel.create({ ...priceDto, owner: typedUser });
+        return newPrice;
     }
-    async findAll() {
-        return this.priceModel.find();
+    async findAll(req) {
+        const user = req.user;
+        if (!user || typeof user !== "object" || !("_id" in user)) {
+            throw new Error("User not found");
+        }
+        const typedUser = user;
+        return this.priceModel.find({ owner: typedUser._id });
     }
 };
 exports.PricesService = PricesService;
+__decorate([
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], PricesService.prototype, "create", null);
+__decorate([
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], PricesService.prototype, "findAll", null);
 exports.PricesService = PricesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(price_schema_1.Price.name)),

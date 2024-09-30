@@ -15,29 +15,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PricesController = void 0;
 const common_1 = require("@nestjs/common");
 const prices_service_1 = require("./prices.service");
+const auth_guard_1 = require("../auth/auth.guard");
+const transform_price_pipe_1 = require("./transform-price/transform-price.pipe");
 let PricesController = class PricesController {
     constructor(pricesService) {
         this.pricesService = pricesService;
     }
-    async getAll() {
-        return this.pricesService.findAll();
+    async getAll(req) {
+        return this.pricesService.findAll(req);
     }
-    async create(priceDto) {
-        return this.pricesService.create(priceDto);
+    async create(priceDto, req) {
+        return this.pricesService.create(priceDto, req);
     }
 };
 exports.PricesController = PricesController;
 __decorate([
     (0, common_1.Get)(),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], PricesController.prototype, "getAll", null);
 __decorate([
     (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Body)(transform_price_pipe_1.TransformPricePipe)),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], PricesController.prototype, "create", null);
 exports.PricesController = PricesController = __decorate([

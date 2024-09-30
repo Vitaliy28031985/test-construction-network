@@ -16,13 +16,49 @@ exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const user_schema_1 = require("../database/schemas/user.schema");
 let UsersService = class UsersService {
-    constructor(userModal) {
-        this.userModal = userModal;
+    constructor(userModel) {
+        this.userModel = userModel;
+        this.secretKey = process.env.SECRET_KEY;
     }
     async findAll() {
-        return this.userModal.find();
+        return this.userModel.find();
+    }
+    async register(userDto) {
+        const { email, password } = userDto;
+        const normalizedEmail = email.toLowerCase();
+        const existingUser = await this.userModel.findOne({
+            email: normalizedEmail,
+        });
+        if (existingUser) {
+            throw new common_1.ConflictException("Email вже використовується іншим користувачем");
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await this.userModel.create({
+            ...userDto,
+            email: normalizedEmail,
+            password: hashedPassword,
+        });
+        return newUser;
+    }
+    async login(loginDto) {
+        const { email, password } = loginDto;
+        const normalizedEmail = email.toLowerCase();
+        const user = await this.userModel.findOne({ email: normalizedEmail });
+        if (!user) {
+            throw new common_1.UnauthorizedException(`Користувача з email ${normalizedEmail} не існує!`);
+        }
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            throw new common_1.UnauthorizedException("Невірний пароль! Спробуйте ще!");
+        }
+        const payload = { id: user._id };
+        const token = jwt.sign(payload, this.secretKey, { expiresIn: "24h" });
+        await this.userModel.findByIdAndUpdate(user._id, { $set: { token } });
+        return { token };
     }
 };
 exports.UsersService = UsersService;

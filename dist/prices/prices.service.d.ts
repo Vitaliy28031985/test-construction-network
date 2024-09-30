@@ -1,4 +1,5 @@
 import { Model } from 'mongoose';
+import { RequestWithUser } from "src/interfaces/requestWithUser";
 import { Price } from 'src/database/schemas/price.schema';
 export declare class PricesService {
     private priceModel;
@@ -6,6 +7,6 @@ export declare class PricesService {
     create(priceDto: {
         title: string;
         price: number;
-    }): Promise<Price>;
-    findAll(): Promise<Price[]>;
+    }, req: RequestWithUser): Promise<Price>;
+    findAll(req: RequestWithUser): Promise<Price[]>;
 }
