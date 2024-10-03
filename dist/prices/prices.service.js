@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const price_schema_1 = require("../database/schemas/price.schema");
+const price_dto_1 = require("./price.dto");
 let PricesService = class PricesService {
     constructor(priceModel) {
         this.priceModel = priceModel;
@@ -41,12 +42,31 @@ let PricesService = class PricesService {
         const typedUser = user;
         return this.priceModel.find({ owner: typedUser._id });
     }
+    async remove(priceId, req) {
+        const user = req.user;
+        if (!user || typeof user !== "object" || !("_id" in user)) {
+            throw new Error("User not found");
+        }
+        const typedUser = user;
+        return this.priceModel.findOneAndDelete({
+            owner: typedUser._id,
+            _id: priceId,
+        });
+    }
+    async update(priceId, priceDto, req) {
+        const user = req.user;
+        if (!user || typeof user !== "object" || !("_id" in user)) {
+            throw new Error("User not found");
+        }
+        const typedUser = user;
+        return await this.priceModel.findByIdAndUpdate({ owner: typedUser._id, _id: priceId }, priceDto, { new: true, fields: ["-createdAt", "-updatedAt"] });
+    }
 };
 exports.PricesService = PricesService;
 __decorate([
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [price_dto_1.PricesDto, Object]),
     __metadata("design:returntype", Promise)
 ], PricesService.prototype, "create", null);
 __decorate([
@@ -55,6 +75,20 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], PricesService.prototype, "findAll", null);
+__decorate([
+    __param(0, (0, common_1.Param)("priceId")),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [mongoose_2.Types.ObjectId, Object]),
+    __metadata("design:returntype", Promise)
+], PricesService.prototype, "remove", null);
+__decorate([
+    __param(0, (0, common_1.Param)("priceId")),
+    __param(2, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [mongoose_2.Types.ObjectId, price_dto_1.PricesDto, Object]),
+    __metadata("design:returntype", Promise)
+], PricesService.prototype, "update", null);
 exports.PricesService = PricesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(price_schema_1.Price.name)),

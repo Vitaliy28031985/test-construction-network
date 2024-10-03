@@ -18,6 +18,7 @@ const user_schema_1 = require("./database/schemas/user.schema");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer.apply(auth_middleware_1.AuthMiddleware).forRoutes("prices");
+        consumer.apply(auth_middleware_1.AuthMiddleware).forRoutes("users/logout");
     }
 };
 exports.AppModule = AppModule;

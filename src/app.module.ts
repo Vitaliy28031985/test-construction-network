@@ -18,5 +18,6 @@ config();
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleware).forRoutes("prices");
+    consumer.apply(AuthMiddleware).forRoutes("users/logout");
   }
 }
