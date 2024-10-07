@@ -13,6 +13,8 @@ const mongoose_1 = require("@nestjs/mongoose");
 const price_schema_1 = require("./schemas/price.schema");
 const allow_schema_1 = require("./schemas/allow.schema");
 const user_schema_1 = require("./schemas/user.schema");
+const reviewsData_schema_1 = require("./schemas/reviewsData.schema");
+const about_schema_1 = require("./schemas/about.schema");
 let DatabaseModule = class DatabaseModule {
 };
 exports.DatabaseModule = DatabaseModule;
@@ -22,6 +24,8 @@ exports.DatabaseModule = DatabaseModule = __decorate([
             mongoose_1.MongooseModule.forFeature([{ name: price_schema_1.Price.name, schema: price_schema_1.PriceSchema }]),
             mongoose_1.MongooseModule.forFeature([{ name: allow_schema_1.Allow.name, schema: allow_schema_1.AllowSchema }]),
             mongoose_1.MongooseModule.forFeature([{ name: user_schema_1.User.name, schema: user_schema_1.UserSchema }]),
+            mongoose_1.MongooseModule.forFeature([{ name: reviewsData_schema_1.Reviews.name, schema: reviewsData_schema_1.ReviewsSchema }]),
+            mongoose_1.MongooseModule.forFeature([{ name: about_schema_1.About.name, schema: about_schema_1.AboutSchema }]),
         ],
         providers: [...database_providers_1.databaseProviders],
         exports: [...database_providers_1.databaseProviders],

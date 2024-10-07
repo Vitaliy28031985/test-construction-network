@@ -60,8 +60,22 @@ let UsersService = class UsersService {
         await this.userModel.findByIdAndUpdate(user._id, { $set: { token } });
         return { token };
     }
+    async logout(req) {
+        const user = req.user;
+        if (!user || typeof user !== "object" || !("_id" in user)) {
+            throw new Error("User not found");
+        }
+        const typedUser = user;
+        return this.userModel.findByIdAndUpdate(typedUser._id, { token: null });
+    }
 };
 exports.UsersService = UsersService;
+__decorate([
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersService.prototype, "logout", null);
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(user_schema_1.User.name)),

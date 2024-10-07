@@ -1,10 +1,12 @@
-import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { ConflictException, Injectable, Req, UnauthorizedException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import { User } from "src/database/schemas/user.schema";
 import { user } from "src/interfaces/user";
+import { RequestWithUser } from "src/interfaces/requestWithUser";
+import { UserGet } from "src/interfaces/userGet";
 
 @Injectable()
 export class UsersService {
@@ -36,27 +38,40 @@ export class UsersService {
     return newUser;
   }
 
-  async login(loginDto: { email: string, password: string }): Promise<{ token: string }> {
+  async login(loginDto: {
+    email: string;
+    password: string;
+  }): Promise<{ token: string }> {
     const { email, password } = loginDto;
     const normalizedEmail = email.toLowerCase();
 
-     const user = await this.userModel.findOne({ email: normalizedEmail });
-     if (!user) {
-       throw new UnauthorizedException(
-         `Користувача з email ${normalizedEmail} не існує!`
-       );
-     }
-    
-       const passwordMatch = await bcrypt.compare(password, user.password);
-       if (!passwordMatch) {
-         throw new UnauthorizedException("Невірний пароль! Спробуйте ще!");
-       }
-    
-      const payload = { id: user._id };
-      const token = jwt.sign(payload, this.secretKey, { expiresIn: "24h" });
+    const user = await this.userModel.findOne({ email: normalizedEmail });
+    if (!user) {
+      throw new UnauthorizedException(
+        `Користувача з email ${normalizedEmail} не існує!`
+      );
+    }
 
-      await this.userModel.findByIdAndUpdate(user._id, { $set: { token } });
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      throw new UnauthorizedException("Невірний пароль! Спробуйте ще!");
+    }
 
-      return { token };
+    const payload = { id: user._id };
+    const token = jwt.sign(payload, this.secretKey, { expiresIn: "24h" });
+
+    await this.userModel.findByIdAndUpdate(user._id, { $set: { token } });
+
+    return { token };
+  }
+
+  async logout(@Req() req: RequestWithUser) {
+    const user = req.user;
+    if (!user || typeof user !== "object" || !("_id" in user)) {
+      throw new Error("User not found");
+    }
+    const typedUser = user as unknown as UserGet;
+    
+    return this.userModel.findByIdAndUpdate(typedUser._id, { token: null });
   }
 }

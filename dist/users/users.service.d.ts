@@ -1,6 +1,7 @@
 import { Model } from "mongoose";
 import { User } from "src/database/schemas/user.schema";
 import { user } from "src/interfaces/user";
+import { RequestWithUser } from "src/interfaces/requestWithUser";
 export declare class UsersService {
     private userModel;
     private readonly secretKey;
@@ -12,5 +13,8 @@ export declare class UsersService {
         password: string;
     }): Promise<{
         token: string;
+    }>;
+    logout(req: RequestWithUser): Promise<import("mongoose").Document<unknown, {}, User> & User & {
+        _id: import("mongoose").Types.ObjectId;
     }>;
 }
